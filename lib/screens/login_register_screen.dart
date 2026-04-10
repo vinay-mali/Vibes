@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vibes/auth_service.dart';
+
+import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
@@ -15,6 +18,50 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   TextEditingController passwordCtrl = TextEditingController();
   bool showPassword = true;
   bool _isLoading = false;
+  final AuthService _authService = AuthService();
+
+  Future<void> handleSignup() async {
+    String email = emailCtrl.text.trim();
+    String password = passwordCtrl.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      scaffoldMessage(context, "Please fill the required details.");
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.registerUser(email, password);
+    } catch (e) {
+      scaffoldMessage(context, e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> handleLogin() async {
+    String email = emailCtrl.text.trim();
+    String password = passwordCtrl.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      scaffoldMessage(context, "Please enter required details.");
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _authService.loginUser(email, password);
+    } catch (e) {
+      scaffoldMessage(context, e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +164,11 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _isLoading
+                            ? null
+                            : widget.mode == 'login'
+                            ? handleLogin
+                            : handleSignup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(
                             255,

@@ -1,10 +1,15 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibes/firebase_options.dart';
+import 'package:vibes/screens/home_screen.dart';
 
 import 'package:vibes/screens/login_register_screen.dart';
+import 'package:vibes/screens/profile_set_screen.dart';
+import 'package:vibes/screens/splash_screen.dart';
 
 
 void main() async {
@@ -36,34 +41,34 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: LoginRegisterScreen(mode: 'login'),
-      // StreamBuilder(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return SplashScreen();
-      //     }
-      //     if (!snapshot.hasData) {
-      //       return LoginRegisterScreen();
-      //     } else {
-      //       return FutureBuilder(
-      //         future: FirebaseFirestore.instance
-      //             .collection('users')
-      //             .doc(snapshot.data!.uid)
-      //             .get(),
-      //         builder: (context, userSnapshot) {
-      //           if (userSnapshot.connectionState == ConnectionState.waiting) {
-      //             return SplashScreen();
-      //           }
-      //           if (userSnapshot.hasData && userSnapshot.data!.exists) {
-      //             return HomeScreen();
-      //           }
-      //           return ProfileSetScreen();
-      //         },
-      //       );
-      //     }
-      //   },
-      // ),
+      home: 
+      StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen();
+          }
+          if (!snapshot.hasData) {
+            return LoginRegisterScreen(mode: 'login',);
+          } else {
+            return FutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(snapshot.data!.uid)
+                  .get(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return SplashScreen();
+                }
+                if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                  return HomeScreen();
+                }
+                return ProfileSetScreen();
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }
