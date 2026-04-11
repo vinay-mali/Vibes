@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:vibes/models/post_model.dart';
-import 'package:vibes/screens/add_opinion_screen.dart';
-import 'package:vibes/utils/helpers.dart';
+import 'package:vibes/screens/add_post_screen.dart';
+
 import 'package:vibes/widgets/app_text.dart';
 import 'package:vibes/widgets/post_card.dart';
 
@@ -13,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,20 +35,18 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             if (snapshot.data!.docs.isEmpty) {
               return Center(
-                child: AppText(text: "No Opinions yet. Be the first!"),
+                child: AppText(text: "No posts yet. Be the first!"),
               );
             }
 
-            return ListView.separated(
+            return ListView.builder(
               itemBuilder: (context, index) {
                 final PostModel post = PostModel.fromMap(
                   snapshot.data!.docs[index].data() as Map<String, dynamic>,
                 );
                 return PostCard(post: post);
               },
-              separatorBuilder: (context, index) {
-                return Divider(color: Colors.grey, thickness: 1);
-              },
+
               itemCount: snapshot.data!.docs.length,
             );
           },
@@ -59,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddOpinionScreen()),
+            MaterialPageRoute(builder: (context) => AddPostScreen()),
           );
         },
         backgroundColor: Colors.deepPurple,
