@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibes/auth_service.dart';
+import 'package:vibes/screens/home_screen.dart';
+import 'package:vibes/screens/profile_set_screen.dart';
 
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
@@ -32,7 +36,15 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     });
 
     try {
-      await _authService.registerUser(email, password);
+      User? user = await _authService.registerUser(email, password);
+      if (user != null) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ProfileSetScreen()),
+          );
+        }
+      }
     } catch (e) {
       scaffoldMessage(context, e.toString());
     } finally {
@@ -53,7 +65,22 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
       _isLoading = true;
     });
     try {
-      await _authService.loginUser(email, password);
+      User? user = await _authService.loginUser(email, password);
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  doc.exists ? HomeScreen() : ProfileSetScreen(),
+            ),
+          );
+        }
+      }
     } catch (e) {
       scaffoldMessage(context, e.toString());
     } finally {
@@ -61,6 +88,13 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
   }
 
   @override

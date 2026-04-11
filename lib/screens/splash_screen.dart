@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
                   textFontSize: 50,
                   textFontWeight: FontWeight.bold,
                 ),
-                AppText(text: "Your world, your vibe. "),
+                AppText(text: "Your world, your vibe. ❤️"),
               ],
             ),
           ),

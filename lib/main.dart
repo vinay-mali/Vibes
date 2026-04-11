@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +9,6 @@ import 'package:vibes/screens/home_screen.dart';
 import 'package:vibes/screens/login_register_screen.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
 import 'package:vibes/screens/splash_screen.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,17 +39,17 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: 
-      StreamBuilder(
+      home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SplashScreen();
           }
           if (!snapshot.hasData) {
-            return LoginRegisterScreen(mode: 'login',);
+            return LoginRegisterScreen(mode: 'login');
           } else {
-            return FutureBuilder(
+            return FutureBuilder<DocumentSnapshot>(
+   
               future: FirebaseFirestore.instance
                   .collection('users')
                   .doc(snapshot.data!.uid)
