@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(10),
-          side: BorderSide(color: Colors.black, width: 2),
+          
         ),
         child: Icon(Icons.add, color: Colors.white, size: 30),
       ),

@@ -42,7 +42,7 @@ class PostCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  child: Icon(Icons.person, color: Colors.deepPurple),
+                  child: Icon(Icons.person, color: Colors.deepPurple.shade300),
                 ),
                 SizedBox(width: 10),
                 Column(

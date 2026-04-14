@@ -33,17 +33,31 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
       scaffoldMessage(context, "Please enter the required details");
       return;
     }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
+      final usernameQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('username', isEqualTo: usernameCtrl.text.trim().toLowerCase())
+          .get();
+
+      if (usernameQuery.docs.isNotEmpty) {
+        scaffoldMessage(context, "Username already taken. Try another");
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
       User? user = FirebaseAuth.instance.currentUser;
       UserModel userModel = UserModel(
         uid: user!.uid,
-        username: usernameCtrl.text.trim(),
+        username: usernameCtrl.text.trim().toLowerCase(),
         fullName: fullNameCtrl.text.trim(),
-        bio: bioCtrl.text.trim().isEmpty? null : bioCtrl.text.trim(),
+        bio: bioCtrl.text.trim().isEmpty ? null : bioCtrl.text.trim(),
         createdAt: DateTime.now(),
       );
       await FirebaseFirestore.instance
