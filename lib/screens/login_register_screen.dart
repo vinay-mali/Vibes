@@ -41,7 +41,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => ProfileSetScreen()),
+            MaterialPageRoute(builder: (context) => ProfileSetScreen(mode: 'add',)),
           );
         }
       }
@@ -76,7 +76,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  doc.exists ? HomeScreen() : ProfileSetScreen(),
+                  doc.exists ? HomeScreen() : ProfileSetScreen(mode: 'add',),
             ),
           );
         }

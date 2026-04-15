@@ -6,11 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/home_screen.dart';
+import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class ProfileSetScreen extends StatefulWidget {
-  const ProfileSetScreen({super.key});
+  final String mode;
+
+  const ProfileSetScreen({super.key, required this.mode});
 
   @override
   State<ProfileSetScreen> createState() => _ProfileSetScreenState();
@@ -21,6 +24,19 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
   TextEditingController usernameCtrl = TextEditingController();
   TextEditingController bioCtrl = TextEditingController();
   bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    widget.mode == 'edit'
+        ? fullNameCtrl.text = context.read<UserProvider>().user!.fullName
+        : null;
+    widget.mode == 'edit'
+        ? usernameCtrl.text = context.read<UserProvider>().user!.username
+        : null;
+    widget.mode == 'edit'
+        ? bioCtrl.text = context.read<UserProvider>().user!.bio ?? ""
+        : null;
+  }
 
   @override
   void dispose() {
@@ -45,13 +61,24 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
           .collection('users')
           .where('username', isEqualTo: usernameCtrl.text.trim().toLowerCase())
           .get();
-
-      if (usernameQuery.docs.isNotEmpty) {
-        scaffoldMessage(context, "Username already taken. Try another");
-        setState(() {
-          _isLoading = false;
-        });
-        return;
+      if (widget.mode == 'add') {
+        if (usernameQuery.docs.isNotEmpty) {
+          scaffoldMessage(context, "Username already taken. Try another");
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+      } else {
+        if (usernameQuery.docs.isNotEmpty &&
+            context.read<UserProvider>().user!.username !=
+                usernameCtrl.text.trim().toLowerCase()) {
+          scaffoldMessage(context, "Username already taken. Try another");
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        } 
       }
 
       User? user = FirebaseAuth.instance.currentUser;
@@ -62,17 +89,28 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         bio: bioCtrl.text.trim().isEmpty ? null : bioCtrl.text.trim(),
         createdAt: DateTime.now(),
       );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set(userModel.toMap());
-      await context.read<UserProvider>().fetchUser();
+      if (widget.mode == 'add') {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set(userModel.toMap());
+      } else {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update(userModel.toMap());
+      }
 
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        await context.read<UserProvider>().fetchUser();
+        if (widget.mode == 'add') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        } else {
+          Navigator.pop(context);
+        }
       }
     } catch (e) {
       scaffoldMessage(context, "Something went wrong. Please try again");
@@ -90,7 +128,11 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Create your Profile")),
+        appBar: AppBar(
+          title: Text(
+            widget.mode == 'add' ? "Create your Profile" : "Edit Profile",
+          ),
+        ),
         body: SingleChildScrollView(
           child: SafeArea(
             child: ConstrainedBox(
@@ -186,7 +228,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
                                 ),
                               )
                             : AppText(
-                                text: "Create",
+                                text: widget.mode == 'add' ? "Create" : "Save",
                                 textColor: Colors.white,
                                 textFontSize: 18,
                               ),

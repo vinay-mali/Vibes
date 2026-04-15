@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class PostCard extends StatelessWidget {
@@ -41,17 +42,30 @@ class PostCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  child: Icon(Icons.person, color: Colors.deepPurple.shade300),
+                InkWell(
+                  onTap: () {
+                    
+                  },
+                  child: CircleAvatar(
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.deepPurple.shade300,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppText(
-                      text: post.fullName,
-                      textFontWeight: FontWeight.bold,
-                      textFontSize: 16,
+                    InkWell(
+                      onTap: () {
+                        
+                      },
+                      child: AppText(
+                        text: post.fullName,
+                        textFontWeight: FontWeight.bold,
+                        textFontSize: 16,
+                      ),
                     ),
                     AppText(
                       text: "@${post.username}",

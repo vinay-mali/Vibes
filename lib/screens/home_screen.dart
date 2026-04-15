@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:vibes/models/post_model.dart';
 import 'package:vibes/screens/add_post_screen.dart';
+import 'package:vibes/screens/profile_visit_screen.dart';
 
 import 'package:vibes/widgets/app_text.dart';
 import 'package:vibes/widgets/post_card.dart';
@@ -16,7 +17,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Vibes")),
+      appBar: AppBar(
+        title: Text("Vibes"),
+        actions: [
+          CircleAvatar(
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileVisitScreen()),
+                );
+              },
+              icon: Icon(Icons.person),
+            ),
+          ),
+          IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        ],
+      ),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
@@ -63,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(10),
-          
         ),
         child: Icon(Icons.add, color: Colors.white, size: 30),
       ),

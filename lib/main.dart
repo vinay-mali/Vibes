@@ -14,7 +14,12 @@ import 'package:vibes/screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(ChangeNotifierProvider(create: (context) => UserProvider(),child: const MyApp()));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -50,7 +55,6 @@ class MyApp extends StatelessWidget {
             return LoginRegisterScreen(mode: 'login');
           } else {
             return FutureBuilder<DocumentSnapshot>(
-   
               future: FirebaseFirestore.instance
                   .collection('users')
                   .doc(snapshot.data!.uid)
@@ -60,9 +64,12 @@ class MyApp extends StatelessWidget {
                   return SplashScreen();
                 }
                 if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                  Future.microtask(() {
+                    context.read<UserProvider>().fetchUser();
+                  });
                   return HomeScreen();
                 }
-                return ProfileSetScreen();
+                return ProfileSetScreen(mode: 'add');
               },
             );
           }
