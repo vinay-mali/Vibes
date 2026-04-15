@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vibes/models/post_model.dart';
+import 'package:vibes/models/user_model.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class ProfileVisitScreen extends StatefulWidget {
-  const ProfileVisitScreen({super.key});
+  final String mode;
+
+  const ProfileVisitScreen({super.key, required this.mode});
   @override
   State<ProfileVisitScreen> createState() => _ProfileVisitScreenState();
 }
@@ -22,7 +24,15 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().user;
+    final otherUser = context.watch<UserProvider>().otherUser;
     if (user == null) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.deepPurple),
+        ),
+      );
+    }
+    if (widget.mode == 'other' && otherUser == null) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(color: Colors.deepPurple),
@@ -31,22 +41,26 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: AppText(text: user.username, textFontSize: 18),
+        title: AppText(
+          text: widget.mode == 'user' ? user.username : otherUser!.username,
+          textFontSize: 18,
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileSetScreen(mode: 'edit'),
-                  ),
-                );
-              },
-              icon: Icon(Icons.edit, size: 30),
+          if (widget.mode == 'user')
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileSetScreen(mode: 'edit'),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.edit, size: 30),
+              ),
             ),
-          ),
         ],
       ),
       body: SafeArea(
@@ -69,12 +83,19 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
             ),
             SizedBox(height: 20),
             AppText(
-              text: user.fullName,
+              text: widget.mode == 'user' ? user.fullName : otherUser!.fullName,
               textFontSize: 25,
               textFontWeight: FontWeight.bold,
             ),
             SizedBox(height: 20),
-            AppText(text: user.bio == null ? "" : user.bio!, textFontSize: 16),
+            AppText(
+              text: widget.mode == 'user'
+                  ? user.bio == null
+                        ? ""
+                        : user.bio!
+                  : otherUser!.bio ?? "",
+              textFontSize: 16,
+            ),
           ],
         ),
       ),

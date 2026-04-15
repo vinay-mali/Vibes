@@ -17,9 +17,9 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
     return UserModel(
-      uid: json['uid'],
-      username: json['username'],
-      fullName: json['fullName'],
+      uid: json['uid'] ?? '',
+      username: json['username'] ?? '',
+      fullName: json['fullName'] ?? '',
       bio: json['bio'],
       createdAt: (json['createdAt'] as Timestamp).toDate(),
     );

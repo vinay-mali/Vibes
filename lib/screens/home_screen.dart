@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/add_post_screen.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
 
@@ -25,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileVisitScreen()),
+                  MaterialPageRoute(builder: (context) => ProfileVisitScreen(mode: 'user')),
                 );
               },
               icon: Icon(Icons.person),

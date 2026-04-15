@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/utils/helpers.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -44,20 +46,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
 
     try {
-      final User? user = FirebaseAuth.instance.currentUser;
       final postDoc = FirebaseFirestore.instance.collection('posts').doc();
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
-      final username = userDoc['username'];
-      final fullName = userDoc['fullName'];
+      final currentUser = context.read<UserProvider>().user;
+      if (currentUser == null) {
+        scaffoldMessage(context, 'Something went wrong');
+        return;
+      }
       final PostModel postModel = PostModel(
         postID: postDoc.id,
         content: postCtrl.text.trim(),
         createdAt: DateTime.now(),
-        username: username,
-        fullName: fullName,
+        username: currentUser.username,
+        fullName: currentUser.fullName,
+        uid: currentUser.uid,
       );
       await postDoc.set(postModel.toMap());
       if (mounted) {

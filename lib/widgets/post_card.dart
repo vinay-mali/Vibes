@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/widgets/app_text.dart';
 
@@ -24,8 +26,27 @@ class PostCard extends StatelessWidget {
     return "${time.day}/${time.month}/${time.year}";
   }
 
+  Future<void> handleShowOtherProfile(BuildContext context) async {
+    await context.read<UserProvider>().fetchByID(post.uid);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ProfileVisitScreen(mode: 'other'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.watch<UserProvider>().user;
+    final displayName = post.uid == currentUser!.uid
+        ? currentUser.fullName
+        : post.fullName;
+    final displayUsername = post.uid == currentUser.uid
+        ? currentUser.username
+        : post.username;
     return Card(
       elevation: 1,
       color: const Color.fromARGB(255, 245, 242, 249),
@@ -34,7 +55,7 @@ class PostCard extends StatelessWidget {
         borderRadius: BorderRadiusGeometry.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,8 +64,8 @@ class PostCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: () {
-                    
+                  onTap: () async {
+                    handleShowOtherProfile(context);
                   },
                   child: CircleAvatar(
                     child: Icon(
@@ -58,17 +79,17 @@ class PostCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () {
-                        
+                      onTap: () async {
+                        handleShowOtherProfile(context);
                       },
                       child: AppText(
-                        text: post.fullName,
-                        textFontWeight: FontWeight.bold,
+                        text: displayName,
+                        textFontWeight: FontWeight.w600,
                         textFontSize: 16,
                       ),
                     ),
                     AppText(
-                      text: "@${post.username}",
+                      text: "@${displayUsername}",
                       textColor: Colors.grey,
                       textFontSize: 13,
                     ),
@@ -78,11 +99,14 @@ class PostCard extends StatelessWidget {
             ),
             SizedBox(height: 12),
             AppText(text: post.content, textFontSize: 16),
-            SizedBox(height: 9),
-            AppText(
-              text: _formatTime(post.createdAt),
-              textColor: Colors.grey,
-              textFontSize: 14,
+            SizedBox(height: 5),
+            Align(
+              alignment: Alignment.centerRight,
+              child: AppText(
+                text: _formatTime(post.createdAt),
+                textColor: Colors.grey,
+                textFontSize: 14,
+              ),
             ),
           ],
         ),

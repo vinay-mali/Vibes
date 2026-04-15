@@ -64,10 +64,16 @@ class MyApp extends StatelessWidget {
                   return SplashScreen();
                 }
                 if (userSnapshot.hasData && userSnapshot.data!.exists) {
-                  Future.microtask(() {
-                    context.read<UserProvider>().fetchUser();
-                  });
-                  return HomeScreen();
+                  return FutureBuilder(
+                    future: context.read<UserProvider>().fetchUser(),
+                    builder: (context, fetchSnapshot) {
+                      if (fetchSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return SplashScreen();
+                      }
+                      return HomeScreen();
+                    },
+                  );
                 }
                 return ProfileSetScreen(mode: 'add');
               },

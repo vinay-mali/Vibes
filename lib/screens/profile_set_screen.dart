@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/home_screen.dart';
-import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
 
@@ -78,7 +77,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
             _isLoading = false;
           });
           return;
-        } 
+        }
       }
 
       User? user = FirebaseAuth.instance.currentUser;
@@ -99,6 +98,18 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
             .collection('users')
             .doc(user.uid)
             .update(userModel.toMap());
+      }
+      if (widget.mode == 'edit') {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('posts')
+            .where('uid', isEqualTo: user.uid)
+            .get();
+        for (var doc in snapshot.docs) {
+          await doc.reference.update({
+            'username': usernameCtrl.text.trim().toLowerCase(),
+            'fullName': fullNameCtrl.text.trim(),
+          });
+        }
       }
 
       if (mounted) {
