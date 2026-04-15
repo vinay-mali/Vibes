@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
+import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/home_screen.dart';
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
@@ -64,6 +66,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
           .collection('users')
           .doc(user.uid)
           .set(userModel.toMap());
+      await context.read<UserProvider>().fetchUser();
 
       if (mounted) {
         Navigator.pushReplacement(
