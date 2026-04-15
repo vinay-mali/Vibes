@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:vibes/models/post_model.dart';
-import 'package:vibes/providers/user_provider.dart';
+
 import 'package:vibes/screens/add_post_screen.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
+import 'package:vibes/screens/settings_screen.dart';
 
 import 'package:vibes/widgets/app_text.dart';
 import 'package:vibes/widgets/post_card.dart';
@@ -19,56 +20,75 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text("Vibes"),
+        backgroundColor: Colors.transparent,
         actions: [
           CircleAvatar(
             child: IconButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileVisitScreen(mode: 'user')),
+                  MaterialPageRoute(
+                    builder: (context) => ProfileVisitScreen(mode: 'user'),
+                  ),
                 );
               },
               icon: Icon(Icons.person),
             ),
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            },
+            icon: Icon(Icons.menu),
+          ),
         ],
       ),
-      body: SafeArea(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('posts')
-              .orderBy("createdAt", descending: true)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: AppText(text: "Something went wrong."));
-            }
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF3E8FF), Color(0xFFEDE9FE)],
+          ),
+        ),
+        child: SafeArea(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('posts')
+                .orderBy("createdAt", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: AppText(text: "Something went wrong."));
+              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(color: Colors.deepPurple),
-              );
-            }
-            if (snapshot.data!.docs.isEmpty) {
-              return Center(
-                child: AppText(text: "No posts yet. Be the first!"),
-              );
-            }
-
-            return ListView.builder(
-              itemBuilder: (context, index) {
-                final PostModel post = PostModel.fromMap(
-                  snapshot.data!.docs[index].data() as Map<String, dynamic>,
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(color: Colors.deepPurple),
                 );
-                return PostCard(post: post);
-              },
+              }
+              if (snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: AppText(text: "No posts yet. Be the first!"),
+                );
+              }
 
-              itemCount: snapshot.data!.docs.length,
-            );
-          },
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  final PostModel post = PostModel.fromMap(
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
+                  );
+                  return PostCard(post: post);
+                },
+
+                itemCount: snapshot.data!.docs.length,
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

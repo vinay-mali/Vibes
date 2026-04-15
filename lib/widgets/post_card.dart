@@ -32,8 +32,7 @@ class PostCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ProfileVisitScreen(mode: 'other'),
+        builder: (context) => ProfileVisitScreen(mode: 'other'),
       ),
     );
   }
@@ -48,8 +47,8 @@ class PostCard extends StatelessWidget {
         ? currentUser.username
         : post.username;
     return Card(
-      elevation: 1,
-      color: const Color.fromARGB(255, 245, 242, 249),
+      elevation: 2,
+      color: const Color.fromARGB(255, 243, 236, 255),
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(12),

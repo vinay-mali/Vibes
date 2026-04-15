@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vibes/models/post_model.dart';
-import 'package:vibes/models/user_model.dart';
+
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
 import 'package:vibes/widgets/app_text.dart';
