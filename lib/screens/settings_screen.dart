@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vibes/auth_service.dart';
 import 'package:vibes/screens/login_register_screen.dart';
