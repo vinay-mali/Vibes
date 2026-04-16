@@ -117,7 +117,6 @@ class _PostCardState extends State<PostCard> {
       return;
     }
   }
-  //Future<void> show
 
   @override
   Widget build(BuildContext context) {
@@ -133,14 +132,13 @@ class _PostCardState extends State<PostCard> {
         return FocusScope.of(context).unfocus();
       },
       child: Card(
-        elevation: 2,
         color: Colors.white,
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.only(left: 12, right: 12, top: 7),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,9 +180,9 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 10),
               AppText(text: widget.post.content, textFontSize: 16),
-              SizedBox(height: 5),
+              SizedBox(height: 3),
               Align(
                 alignment: Alignment.centerRight,
                 child: AppText(
@@ -198,7 +196,7 @@ class _PostCardState extends State<PostCard> {
                 children: [
                   Row(
                     children: [
-                      InkWell(
+                      GestureDetector(
                         onTap: _handleLikes,
                         onLongPress: () {
                           showModalBottomSheet(
