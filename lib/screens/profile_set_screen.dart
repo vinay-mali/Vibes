@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
+
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/home_screen.dart';
+
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
 
@@ -26,15 +26,20 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
   @override
   void initState() {
     super.initState();
-    widget.mode == 'edit'
-        ? fullNameCtrl.text = context.read<UserProvider>().user!.fullName
-        : null;
-    widget.mode == 'edit'
-        ? usernameCtrl.text = context.read<UserProvider>().user!.username
-        : null;
-    widget.mode == 'edit'
-        ? bioCtrl.text = context.read<UserProvider>().user!.bio ?? ""
-        : null;
+    if (widget.mode == 'edit') {
+      final currentUser = context.read<UserProvider>().getCurrentUser();
+
+      context.read<UserProvider>().getUserByID(currentUser!.uid).then((_) {
+        final userModel = context.read<UserProvider>().userModel;
+        if (userModel != null && mounted) {
+          setState(() {
+            fullNameCtrl.text = userModel.fullName;
+            usernameCtrl.text = userModel.username;
+            bioCtrl.text = userModel.bio ?? "";
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -54,66 +59,45 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
     setState(() {
       _isLoading = true;
     });
+    final currentUser = context.read<UserProvider>().getCurrentUser();
+    if (currentUser == null) {
+      scaffoldMessage(context, "User not found");
+      return;
+    }
+    final bool usernameExists = await context
+        .read<UserProvider>()
+        .isUsernameTaken(usernameCtrl.text.trim().toLowerCase());
+    if (usernameExists &&
+        usernameCtrl.text.trim().toLowerCase() !=
+            context.read<UserProvider>().userModel!.username) {
+      scaffoldMessage(context, "Username already exists");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     try {
-      final usernameQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('username', isEqualTo: usernameCtrl.text.trim().toLowerCase())
-          .get();
-      if (widget.mode == 'add') {
-        if (usernameQuery.docs.isNotEmpty) {
-          scaffoldMessage(context, "Username already taken. Try another");
-          setState(() {
-            _isLoading = false;
-          });
-          return;
-        }
-      } else {
-        if (usernameQuery.docs.isNotEmpty &&
-            context.read<UserProvider>().user!.username !=
-                usernameCtrl.text.trim().toLowerCase()) {
-          scaffoldMessage(context, "Username already taken. Try another");
-          setState(() {
-            _isLoading = false;
-          });
-          return;
-        }
-      }
-
-      User? user = FirebaseAuth.instance.currentUser;
-      UserModel userModel = UserModel(
-        uid: user!.uid,
+      final UserModel userModel = UserModel(
+        uid: currentUser.uid,
         username: usernameCtrl.text.trim().toLowerCase(),
         fullName: fullNameCtrl.text.trim(),
-        bio: bioCtrl.text.trim().isEmpty ? null : bioCtrl.text.trim(),
+        bio: bioCtrl.text.trim().isEmpty ? "" : bioCtrl.text.trim(),
         createdAt: DateTime.now(),
       );
       if (widget.mode == 'add') {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .set(userModel.toMap());
+        await context.read<UserProvider>().createUser(
+          currentUser.uid,
+          userModel,
+        );
       } else {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update(userModel.toMap());
+        await context.read<UserProvider>().updateUser(
+          currentUser.uid,
+          userModel,
+        );
+        await context.read<UserProvider>().getUserByID(currentUser.uid);
       }
-      if (widget.mode == 'edit') {
-        final snapshot = await FirebaseFirestore.instance
-            .collection('posts')
-            .where('uid', isEqualTo: user.uid)
-            .get();
-        for (var doc in snapshot.docs) {
-          await doc.reference.update({
-            'username': usernameCtrl.text.trim().toLowerCase(),
-            'fullName': fullNameCtrl.text.trim(),
-          });
-        }
-      }
-
       if (mounted) {
-        await context.read<UserProvider>().fetchUser();
         if (widget.mode == 'add') {
           Navigator.pushReplacement(
             context,
@@ -124,7 +108,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         }
       }
     } catch (e) {
-      scaffoldMessage(context, "Something went wrong. Please try again");
+      scaffoldMessage(context, "Something went wrong. Please try again.");
     } finally {
       setState(() {
         _isLoading = false;

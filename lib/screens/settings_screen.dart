@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vibes/auth_service.dart';
-import 'package:vibes/screens/login_register_screen.dart';
+import 'package:vibes/services/auth_service.dart';
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
+import 'package:restart_app/restart_app.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -88,24 +88,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           _isLoading = true;
                                         });
                                         await _authService.signOut();
-                                        if (mounted) {
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginRegisterScreen(
-                                                    mode: 'login',
-                                                  ),
-                                            ),
-                                            (route) => false,
-                                          );
-                                        }
+                                        Restart.restartApp();
                                       } catch (e) {
-                                        scaffoldMessage(context, "Log out...");
-                                      } finally {
-                                        setDialogState(() {
-                                          _isLoading = false;
-                                        });
+                                        scaffoldMessage(
+                                          context,
+                                          "Something went wrong",
+                                        );
                                       }
                                     },
                               style: ElevatedButton.styleFrom(

@@ -1,11 +1,10 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/post_provider.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/utils/helpers.dart';
 
@@ -18,7 +17,8 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   TextEditingController postCtrl = TextEditingController();
-  bool _isLoading = false;
+  bool isLoading = false;
+
   final List<String> _hints = [
     "What's going on?",
     "Current Vibe...",
@@ -41,34 +41,36 @@ class _AddPostScreenState extends State<AddPostScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      final postDoc = FirebaseFirestore.instance.collection('posts').doc();
-      final currentUser = context.read<UserProvider>().user;
-      if (currentUser == null) {
-        scaffoldMessage(context, 'Something went wrong');
+      final user = context.read<UserProvider>().getCurrentUser();
+      if (user == null) {
+        scaffoldMessage(context, "User not found");
         return;
       }
+      setState(() {
+        isLoading = true;
+      });
+      final doc = FirebaseFirestore.instance.collection('posts').doc();
+      await context.read<UserProvider>().getUserByID(user.uid);
+      final userData = context.read<UserProvider>().userModel;
+
       final PostModel postModel = PostModel(
-        postID: postDoc.id,
+        postID: doc.id,
         content: postCtrl.text.trim(),
         createdAt: DateTime.now(),
-        username: currentUser.username,
-        fullName: currentUser.fullName,
-        uid: currentUser.uid,
+        uid: user.uid,
+        username: userData!.username,
+        fullName: userData.fullName,
       );
-      await postDoc.set(postModel.toMap());
+      await context.read<PostProvider>().createPost(postModel);
       if (mounted) {
         Navigator.pop(context);
       }
     } catch (e) {
-      scaffoldMessage(context, "Failed to post! Try again.");
+      scaffoldMessage(context, e.toString());
     } finally {
       setState(() {
-        _isLoading = false;
+        isLoading = false;
       });
     }
   }
@@ -84,8 +86,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 5),
               child: IconButton(
-                onPressed: _isLoading ? null : handlePost,
-                icon: _isLoading
+                onPressed: isLoading ? null : handlePost,
+                icon: isLoading
                     ? SizedBox(
                         width: 20,
                         height: 20,

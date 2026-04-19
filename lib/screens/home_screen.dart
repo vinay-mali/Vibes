@@ -1,14 +1,18 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/post_provider.dart';
+import 'package:vibes/providers/user_provider.dart';
 
 import 'package:vibes/screens/add_post_screen.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/screens/settings_screen.dart';
+import 'package:vibes/screens/splash_screen.dart';
 
 import 'package:vibes/widgets/app_text.dart';
-import 'package:vibes/widgets/post_card.dart';
+import 'package:vibes/widgets/post/post_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,13 +31,21 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           CircleAvatar(
             child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileVisitScreen(mode: 'user'),
-                  ),
+              onPressed: () async {
+                final currentUser = context
+                    .read<UserProvider>()
+                    .getCurrentUser();
+                await context.read<UserProvider>().getUserByID(
+                  currentUser!.uid,
                 );
+                if (mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileVisitScreen(mode: 'user'),
+                    ),
+                  );
+                }
               },
               icon: Icon(Icons.person),
             ),
@@ -57,35 +69,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: SafeArea(
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .orderBy("createdAt", descending: true)
-                .snapshots(),
+            stream: context.read<PostProvider>().getPost(),
             builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: AppText(text: "Something went wrong."));
-              }
-
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(color: Colors.deepPurple),
-                );
+                return SplashScreen();
               }
-              if (snapshot.data!.docs.isEmpty) {
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return Center(
                   child: AppText(text: "No posts yet. Be the first!"),
                 );
               }
-
               return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  final PostModel post = PostModel.fromMap(
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
+                  final post = PostModel.fromMap(
+                    snapshot.data!.docs[index].data()
+                        as Map<String, dynamic>,
                   );
                   return PostCard(post: post);
                 },
-
-                itemCount: snapshot.data!.docs.length,
               );
             },
           ),
