@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/auth_wrapper.dart';
 import 'package:vibes/firebase_options.dart';
+import 'package:vibes/providers/comments_provider.dart';
 import 'package:vibes/providers/post_provider.dart';
 import 'package:vibes/providers/user_provider.dart';
 
@@ -16,6 +17,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_)=> UserProvider()),
         ChangeNotifierProvider(create: (_)=> PostProvider()),
+        ChangeNotifierProvider(create: (_)=> CommentsProvider()),
       ],
       child: const MyApp(),
     ),

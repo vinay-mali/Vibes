@@ -36,13 +36,5 @@ class PostProvider extends ChangeNotifier {
     }
   }
 
-  Future<int> likesCount(String postID) async {
-    try {
-      final count = await _postService.likesCount(postID);
-      notifyListeners();
-      return count;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  
 }

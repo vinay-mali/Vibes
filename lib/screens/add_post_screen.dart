@@ -61,6 +61,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         fullName: userModel.fullName,
         likedBy: [],
         likesCount: 0,
+        commentsCount: 0,
       );
       await context.read<PostProvider>().createPost(postModel);
       if (mounted) {

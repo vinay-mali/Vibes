@@ -9,6 +9,7 @@ class PostModel {
   final String fullName;
   final int likesCount;
   final List<Map<String,dynamic>> likedBy;
+  final int commentsCount;
 
   PostModel({
     required this.postID,
@@ -19,6 +20,7 @@ class PostModel {
     required this.fullName,
     required this.likesCount,
     required this.likedBy,
+    required this.commentsCount,
   });
 
   factory PostModel.fromMap(Map<String, dynamic> json) {
@@ -30,7 +32,8 @@ class PostModel {
       fullName: json['fullName'] ?? '',
       username: json['username'] ?? '',
       likesCount: (json['likesCount'] ?? 0) as int,
-      likedBy: List<Map<String,dynamic>>.from((json['likedBy'] as List? ?? []).map((e) => Map<String,dynamic>.from(e)))
+      likedBy: List<Map<String,dynamic>>.from((json['likedBy'] as List? ?? []).map((e) => Map<String,dynamic>.from(e))),
+      commentsCount: (json['commentsCount'] ?? 0) as int
     );
   }
 
@@ -43,7 +46,8 @@ class PostModel {
       'fullName': fullName,
       'username': username,
       'likesCount' : likesCount,
-      'likedBy' : likedBy
+      'likedBy' : likedBy,
+      'çommentsCount' : commentsCount,
     };
   }
 }

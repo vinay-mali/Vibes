@@ -54,17 +54,5 @@ class PostService {
     }
   }
 
-  Future<int> likesCount(String postID) async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(postID)
-          .collection('likes')
-          .count()
-          .get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      throw "Something went wrong";
-    }
-  }
+  
 }
