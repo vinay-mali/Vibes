@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
 
 import 'package:vibes/providers/user_provider.dart';
-import 'package:vibes/screens/home_screen.dart';
+import 'package:vibes/screens/main_screen.dart';
 
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
@@ -100,7 +100,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         if (widget.mode == 'add') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+            MaterialPageRoute(builder: (context) => MainScreen()),
           );
         } else {
           Navigator.pop(context);

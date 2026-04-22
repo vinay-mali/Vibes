@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vibes/screens/home_screen.dart';
 import 'package:vibes/screens/login_register_screen.dart';
+import 'package:vibes/screens/main_screen.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
 import 'package:vibes/screens/splash_screen.dart';
 
@@ -30,7 +31,7 @@ class AuthWrapper extends StatelessWidget {
               return SplashScreen();
             }
             if (userSnapshot.hasData && userSnapshot.data!.exists) {
-              return HomeScreen();
+              return MainScreen();
             }
             return ProfileSetScreen(mode: 'add');
           },
