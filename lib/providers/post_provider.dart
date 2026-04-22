@@ -8,11 +8,6 @@ import 'package:vibes/services/post_service.dart';
 class PostProvider extends ChangeNotifier {
   final PostService _postService = PostService();
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> createPost(PostModel postModel) async {
     try {
       await _postService.createPost(postModel);
@@ -25,17 +20,17 @@ class PostProvider extends ChangeNotifier {
     return _postService.getPost();
   }
 
-  Future<void> likePost(String postID, String username, String uid) async {
+  Future<void> likePost(String postID, String uid, String username) async {
     try {
-      await _postService.likePost(postID, username, uid);
+      await _postService.likePost(postID, uid, username);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> unlikePost(String postID, String uid) async {
+  Future<void> unlikePost(String postID, String uid, String username) async {
     try {
-      await _postService.unlikePost(postID, uid);
+      await _postService.unlikePost(postID, uid,username);
     } catch (e) {
       rethrow;
     }

@@ -19,18 +19,14 @@ class UserService {
   }
 
   Future<UserModel> getUserByID(String uid) async {
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
-      if (!doc.exists) {
-        throw "User not found";
-      }
-      return UserModel.fromMap(doc.data()!);
-    } catch (e) {
-      throw "Failed to fetch user";
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+    if (!doc.exists) {
+      throw "User not found";
     }
+    return UserModel.fromMap(doc.data()!);
   }
 
   Future<void> updateUser(String uid, UserModel userModel) async {
@@ -39,7 +35,6 @@ class UserService {
           .collection('users')
           .doc(uid)
           .update(userModel.toMap());
-      
     } catch (e) {
       throw "Failed to update user.";
     }

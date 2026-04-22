@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/providers/post_provider.dart';
+import 'package:vibes/providers/user_provider.dart';
+import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
 import 'package:vibes/widgets/post/likes_bottom_sheet.dart';
 
@@ -12,14 +16,18 @@ class PostActions extends StatefulWidget {
 }
 
 class _PostActionsState extends State<PostActions> {
-  bool isLiked = false;
-
-  bool isLoading = false;
-
-  int likesCount = 0;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final userModel = context.watch<UserProvider>().currentuserModel;
+    final isLiked =
+        userModel != null &&
+        widget.post.likedBy.any((e) => e['uid'] == userModel.uid);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -27,13 +35,29 @@ class _PostActionsState extends State<PostActions> {
           children: [
             GestureDetector(
               onTap: () async {
-                
+                if (userModel == null) return;
+                try {
+                  if (isLiked) {
+                    await context.read<PostProvider>().unlikePost(
+                      widget.post.postID,
+                      userModel.uid,
+                      userModel.username,
+                    );
+                  } else {
+                    await context.read<PostProvider>().likePost(
+                      widget.post.postID,
+                      userModel.uid,
+                      userModel.username,
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) scaffoldMessage(context, e.toString());
+                }
               },
               onLongPress: () {
                 showModalBottomSheet(
                   context: context,
-                  builder: (context) =>
-                      LikesBottomSheet(postID: widget.post.postID),
+                  builder: (context) => LikesBottomSheet(post: widget.post),
                 );
               },
               child: isLiked
@@ -41,7 +65,7 @@ class _PostActionsState extends State<PostActions> {
                   : Icon(Icons.favorite_outline, color: Colors.black, size: 30),
             ),
             SizedBox(width: 5),
-            AppText(text: likesCount.toString()),
+            AppText(text: widget.post.likesCount.toString()),
           ],
         ),
         Row(

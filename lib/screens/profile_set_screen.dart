@@ -27,18 +27,15 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
   void initState() {
     super.initState();
     if (widget.mode == 'edit') {
-      final currentUser = context.read<UserProvider>().getCurrentUser();
+      final currentUser = context.read<UserProvider>().currentuserModel;
 
-      context.read<UserProvider>().getUserByID(currentUser!.uid).then((_) {
-        final userModel = context.read<UserProvider>().userModel;
-        if (userModel != null && mounted) {
-          setState(() {
-            fullNameCtrl.text = userModel.fullName;
-            usernameCtrl.text = userModel.username;
-            bioCtrl.text = userModel.bio ?? "";
-          });
-        }
-      });
+      if (currentUser != null && mounted) {
+        setState(() {
+          fullNameCtrl.text = currentUser.fullName;
+          usernameCtrl.text = currentUser.username;
+          bioCtrl.text = currentUser.bio ?? "";
+        });
+      }
     }
   }
 
@@ -59,17 +56,19 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
     setState(() {
       _isLoading = true;
     });
-    final currentUser = context.read<UserProvider>().getCurrentUser();
-    if (currentUser == null) {
+    final firebaseUser = context.read<UserProvider>().getCurrentUser();
+    if (firebaseUser == null) {
       scaffoldMessage(context, "User not found");
+      setState(() => _isLoading = false);
       return;
     }
     final bool usernameExists = await context
         .read<UserProvider>()
         .isUsernameTaken(usernameCtrl.text.trim().toLowerCase());
+    if (!mounted) return;
     if (usernameExists &&
         usernameCtrl.text.trim().toLowerCase() !=
-            context.read<UserProvider>().userModel!.username) {
+            context.read<UserProvider>().currentuserModel?.username) {
       scaffoldMessage(context, "Username already exists");
       setState(() {
         _isLoading = false;
@@ -79,7 +78,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
 
     try {
       final UserModel userModel = UserModel(
-        uid: currentUser.uid,
+        uid: firebaseUser.uid,
         username: usernameCtrl.text.trim().toLowerCase(),
         fullName: fullNameCtrl.text.trim(),
         bio: bioCtrl.text.trim().isEmpty ? "" : bioCtrl.text.trim(),
@@ -87,15 +86,15 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
       );
       if (widget.mode == 'add') {
         await context.read<UserProvider>().createUser(
-          currentUser.uid,
+          firebaseUser.uid,
           userModel,
         );
       } else {
         await context.read<UserProvider>().updateUser(
-          currentUser.uid,
+          firebaseUser.uid,
           userModel,
         );
-        await context.read<UserProvider>().getUserByID(currentUser.uid);
+        await context.read<UserProvider>().fetchCurrentUser();
       }
       if (mounted) {
         if (widget.mode == 'add') {

@@ -21,11 +21,7 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     
-    return GestureDetector(
-      onTap: () {
-        return FocusScope.of(context).unfocus();
-      },
-      child: Card(
+    return Card(
         color: Colors.white,
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         shape: RoundedRectangleBorder(
@@ -46,7 +42,7 @@ class _PostCardState extends State<PostCard> {
             ],
           ),
         ),
-      ),
+      
     );
   }
 }

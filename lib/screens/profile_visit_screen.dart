@@ -22,17 +22,11 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<UserProvider>().getCurrentUser();
-    final user = context.watch<UserProvider>().userModel;
+    final user = widget.mode == 'user'
+        ? context.watch<UserProvider>().currentuserModel
+        : context.watch<UserProvider>().visitedUserModel;
 
-    if (currentUser == null) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: Colors.deepPurple),
-        ),
-      );
-    }
-    if (widget.mode == 'other' && user == null) {
+    if (user == null) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(color: Colors.deepPurple),
@@ -42,7 +36,7 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
     return Scaffold(
       appBar: AppBar(
         title: AppText(
-          text: widget.mode == 'user' ? user!.username : user!.username,
+          text: widget.mode == 'user' ? user.username : user.username,
           textFontSize: 18,
         ),
         actions: [

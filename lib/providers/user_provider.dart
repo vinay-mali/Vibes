@@ -5,29 +5,41 @@ import 'package:vibes/services/user_service.dart';
 
 class UserProvider extends ChangeNotifier {
   final UserService _userService = UserService();
-  UserModel? _userModel;
-  UserModel? get userModel => _userModel;
+  UserModel? _currentUserModel;
+  UserModel? get currentuserModel => _currentUserModel;
 
-
+  UserModel? _visitedUserModel;
+  UserModel? get visitedUserModel => _visitedUserModel;
 
   User? getCurrentUser() {
     return _userService.getCurrentUser();
   }
 
-  Future<void> createUser(String uid, UserModel userModel) async {
+  Future<void> fetchCurrentUser() async {
+  try {
+    final user = getCurrentUser();
+    if (user == null) return;
+    _currentUserModel = await _userService.getUserByID(user.uid);
+    notifyListeners();
+  } catch (e) {
+    rethrow;
+  }
+}
+
+  Future<UserModel> getUserByID(String uid) async {
     try {
-      await _userService.createUser(uid, userModel);
+      final user = await _userService.getUserByID(uid);
+      _visitedUserModel = user;
+      notifyListeners();
+      return user;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<UserModel> getUserByID(String uid) async {
+  Future<void> createUser(String uid, UserModel userModel) async {
     try {
-      final user = await _userService.getUserByID(uid);
-      _userModel = user;
-      notifyListeners();
-      return user;
+      await _userService.createUser(uid, userModel);
     } catch (e) {
       rethrow;
     }

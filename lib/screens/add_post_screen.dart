@@ -42,8 +42,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
 
     try {
-      final user = context.read<UserProvider>().getCurrentUser();
-      if (user == null) {
+      final userModel = context.read<UserProvider>().currentuserModel;
+      if (userModel == null) {
         scaffoldMessage(context, "User not found");
         return;
       }
@@ -51,16 +51,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
         isLoading = true;
       });
       final doc = FirebaseFirestore.instance.collection('posts').doc();
-      await context.read<UserProvider>().getUserByID(user.uid);
-      final userData = context.read<UserProvider>().userModel;
 
       final PostModel postModel = PostModel(
         postID: doc.id,
         content: postCtrl.text.trim(),
         createdAt: DateTime.now(),
-        uid: user.uid,
-        username: userData!.username,
-        fullName: userData.fullName,
+        uid: userModel.uid,
+        username: userModel.username,
+        fullName: userModel.fullName,
+        likedBy: [],
+        likesCount: 0,
       );
       await context.read<PostProvider>().createPost(postModel);
       if (mounted) {

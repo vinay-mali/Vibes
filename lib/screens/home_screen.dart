@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +21,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => 
+    context.read<UserProvider>().fetchCurrentUser()
+  );
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -32,12 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
           CircleAvatar(
             child: IconButton(
               onPressed: () async {
-                final currentUser = context
-                    .read<UserProvider>()
-                    .getCurrentUser();
-                await context.read<UserProvider>().getUserByID(
-                  currentUser!.uid,
-                );
                 if (mounted) {
                   Navigator.push(
                     context,
@@ -83,8 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   final post = PostModel.fromMap(
-                    snapshot.data!.docs[index].data()
-                        as Map<String, dynamic>,
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
                   );
                   return PostCard(post: post);
                 },
