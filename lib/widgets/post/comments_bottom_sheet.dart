@@ -58,23 +58,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     }
   }
 
-  String _formatTime(DateTime time) {
-    final diff = DateTime.now().difference(time);
-    if (diff.inMinutes < 1) {
-      return "Just now";
-    }
-    if (diff.inMinutes < 60) {
-      return "${diff.inMinutes}m ago";
-    }
-    if (diff.inHours < 24) {
-      return "${diff.inHours}h ago";
-    }
-    if (diff.inDays < 7) {
-      return "${diff.inDays}d ago";
-    }
-    return "${time.day}/${time.month}/${time.year}";
-  }
-
   @override
   void dispose() {
     commentCtrl.dispose();
@@ -205,7 +188,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: AppText(
-                                  text: _formatTime(comment.createdAt),
+                                  text: formatTime(comment.createdAt),
                                   textColor: Colors.grey,
                                   textFontSize: 12,
                                 ),

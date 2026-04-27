@@ -4,6 +4,7 @@ import 'package:vibes/models/post_model.dart';
 
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
+import 'package:vibes/screens/settings_screen.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class ProfileVisitScreen extends StatefulWidget {
@@ -35,10 +36,7 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: AppText(
-          text: widget.mode == 'user' ? user.username : user.username,
-          textFontSize: 18,
-        ),
+        title: AppText(text: user.username, textFontSize: 18),
         actions: [
           if (widget.mode == 'user')
             Padding(
@@ -53,6 +51,19 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
                   );
                 },
                 icon: Icon(Icons.edit, size: 30),
+              ),
+            ),
+          if (widget.mode == 'user')
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  );
+                },
+                icon: Icon(Icons.menu),
               ),
             ),
         ],
@@ -77,15 +88,12 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
             ),
             SizedBox(height: 20),
             AppText(
-              text: widget.mode == 'user' ? user.fullName : user.fullName,
+              text: user.fullName,
               textFontSize: 25,
               textFontWeight: FontWeight.bold,
             ),
             SizedBox(height: 20),
-            AppText(
-              text: widget.mode == 'user' ? user.bio ?? "" : user.bio ?? "",
-              textFontSize: 16,
-            ),
+            AppText(text: user.bio ?? "", textFontSize: 16),
           ],
         ),
       ),

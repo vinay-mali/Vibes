@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vibes/screens/home_screen.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
+import 'package:vibes/screens/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,6 +14,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     HomeScreen(),
+    SearchScreen(),
     ProfileVisitScreen(mode: 'user'),
   ];
   @override
@@ -35,6 +37,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 10,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Explore"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),

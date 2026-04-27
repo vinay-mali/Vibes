@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +58,16 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
     setState(() {
       _isLoading = true;
     });
+    final usernameRegex = RegExp(r'^[a-z0-9_.]{3,20}$');
+
+    if (!usernameRegex.hasMatch(usernameCtrl.text.trim().toLowerCase())) {
+      scaffoldMessage(
+        context,
+        "Username can only have letters, numbers, _ or . (3-20 chars)",
+      );
+      setState(() => _isLoading = false);
+      return;
+    }
     final firebaseUser = context.read<UserProvider>().getCurrentUser();
     if (firebaseUser == null) {
       scaffoldMessage(context, "User not found");
@@ -83,6 +95,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         fullName: fullNameCtrl.text.trim(),
         bio: bioCtrl.text.trim().isEmpty ? "" : bioCtrl.text.trim(),
         createdAt: DateTime.now(),
+        randomIndex: Random().nextDouble()
       );
       if (widget.mode == 'add') {
         await context.read<UserProvider>().createUser(

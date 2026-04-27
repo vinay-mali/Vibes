@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
@@ -6,6 +8,7 @@ class UserModel {
   final String username;
   final String? bio;
   final DateTime createdAt;
+  final double randomIndex;
 
   UserModel({
     required this.uid,
@@ -13,6 +16,7 @@ class UserModel {
     required this.fullName,
     this.bio,
     required this.createdAt,
+    required this.randomIndex
   });
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
@@ -22,6 +26,7 @@ class UserModel {
       fullName: json['fullName'] ?? '',
       bio: json['bio'],
       createdAt: (json['createdAt'] as Timestamp).toDate(),
+      randomIndex: json['randomIndex'] ?? Random().nextDouble()
     );
   }
 
@@ -32,6 +37,7 @@ class UserModel {
       'username': username,
       'bio': bio,
       'createdAt': Timestamp.fromDate(createdAt),
+      'randomIndex' : randomIndex
     };
   }
 }

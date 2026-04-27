@@ -6,7 +6,6 @@ import 'package:vibes/providers/post_provider.dart';
 import 'package:vibes/providers/user_provider.dart';
 
 import 'package:vibes/screens/add_post_screen.dart';
-import 'package:vibes/screens/settings_screen.dart';
 import 'package:vibes/screens/splash_screen.dart';
 
 import 'package:vibes/widgets/app_text.dart';
@@ -32,17 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text("Vibes"),
         backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              );
-            },
-            icon: Icon(Icons.menu),
-          ),
-        ],
+        
       ),
       body: Container(
         decoration: BoxDecoration(

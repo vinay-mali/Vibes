@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:vibes/screens/home_screen.dart';
 import 'package:vibes/screens/login_register_screen.dart';
 import 'package:vibes/screens/main_screen.dart';
 import 'package:vibes/screens/profile_set_screen.dart';

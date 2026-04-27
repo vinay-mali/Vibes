@@ -16,15 +16,15 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> fetchCurrentUser() async {
-  try {
-    final user = getCurrentUser();
-    if (user == null) return;
-    _currentUserModel = await _userService.getUserByID(user.uid);
-    notifyListeners();
-  } catch (e) {
-    rethrow;
+    try {
+      final user = getCurrentUser();
+      if (user == null) return;
+      _currentUserModel = await _userService.getUserByID(user.uid);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
-}
 
   Future<UserModel> getUserByID(String uid) async {
     try {
@@ -57,5 +57,21 @@ class UserProvider extends ChangeNotifier {
 
   Future<bool> isUsernameTaken(String username) async {
     return await _userService.isUsernameTaken(username);
+  }
+
+  Future<List<UserModel>> searchUser(String querry) async {
+    try {
+      return await _userService.searchUser(querry);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<UserModel>> fetchRandomUser() async {
+    try {
+    return await _userService.fetchRandomUsers();
+    } catch (e){
+      rethrow;
+    }
   }
 }
