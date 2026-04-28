@@ -48,6 +48,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
         }
       }
     } catch (e) {
+      if (!mounted) return;
       scaffoldMessage(context, e.toString());
     } finally {
       if (mounted) {
@@ -75,8 +76,6 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
             .collection('users')
             .doc(user.uid)
             .get();
-
-        
 
         if (!mounted) return;
         Navigator.pushReplacement(

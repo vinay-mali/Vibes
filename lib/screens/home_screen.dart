@@ -28,11 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text("Vibes"),
-        backgroundColor: Colors.transparent,
-        
-      ),
+      appBar: AppBar(title: Text("Vibes"), backgroundColor: Colors.transparent),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

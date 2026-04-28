@@ -75,18 +75,18 @@ class UserService {
       final snapshot = await FirebaseFirestore.instance
           .collection('users')
           .where("randomIndex", isGreaterThan: random)
-          .limit(6)
+          .limit(7)
           .get();
       List<UserModel> users = snapshot.docs
           .map((doc) => UserModel.fromMap(doc.data()))
           .where((u) => u.uid != currentUID)
           .toList();
 
-      if (users.length < 6) {
+      if (users.length < 7) {
         final secondSnapshot = await FirebaseFirestore.instance
             .collection('users')
             .where("randomIndex", isLessThanOrEqualTo: random)
-            .limit(6 - users.length)
+            .limit(7 - users.length)
             .get();
         users.addAll(
           secondSnapshot.docs
