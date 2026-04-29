@@ -9,6 +9,8 @@ class UserModel {
   final String? bio;
   final DateTime createdAt;
   final double randomIndex;
+  final String? photoUrl;
+  final String? photoPublicId;
 
   UserModel({
     required this.uid,
@@ -16,7 +18,9 @@ class UserModel {
     required this.fullName,
     this.bio,
     required this.createdAt,
-    required this.randomIndex
+    required this.randomIndex,
+    this.photoUrl,
+    this.photoPublicId,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
@@ -26,7 +30,9 @@ class UserModel {
       fullName: json['fullName'] ?? '',
       bio: json['bio'],
       createdAt: (json['createdAt'] as Timestamp).toDate(),
-      randomIndex: json['randomIndex'] ?? Random().nextDouble()
+      randomIndex: json['randomIndex'] ?? Random().nextDouble(),
+      photoUrl: json['photoUrl'],
+      photoPublicId: json['photoPublicId'],
     );
   }
 
@@ -37,7 +43,9 @@ class UserModel {
       'username': username,
       'bio': bio,
       'createdAt': Timestamp.fromDate(createdAt),
-      'randomIndex' : randomIndex
+      'randomIndex': randomIndex,
+      'photoUrl': photoUrl,
+      'photoPublicId': photoPublicId,
     };
   }
 }

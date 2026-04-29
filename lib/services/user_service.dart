@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vibes/models/user_model.dart';
+import 'package:vibes/services/cloudinary_service.dart';
 
 class UserService {
+  final CloudinaryService _cloudinaryService = CloudinaryService();
+
   User? getCurrentUser() {
     return FirebaseAuth.instance.currentUser;
   }
@@ -82,11 +86,11 @@ class UserService {
           .where((u) => u.uid != currentUID)
           .toList();
 
-      if (users.length < 7) {
+      if (users.length < 6) {
         final secondSnapshot = await FirebaseFirestore.instance
             .collection('users')
             .where("randomIndex", isLessThanOrEqualTo: random)
-            .limit(7 - users.length)
+            .limit(6 - users.length)
             .get();
         users.addAll(
           secondSnapshot.docs
@@ -98,6 +102,21 @@ class UserService {
       return users;
     } catch (e) {
       throw "";
+    }
+  }
+
+  Future<Map<String, String>> uploadProfilePhoto(
+    File imageFile,
+    String? oldPublicId,
+  ) async {
+    try {
+      if (oldPublicId != null && oldPublicId.isNotEmpty) {
+        await _cloudinaryService.deleteImage(oldPublicId);
+      }
+      final result = await _cloudinaryService.uploadImage(imageFile, 'users');
+      return result;
+    } catch (e) {
+      throw "Failed to upload photo. Try again.";
     }
   }
 }

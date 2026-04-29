@@ -62,6 +62,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         likedBy: [],
         likesCount: 0,
         commentsCount: 0,
+        photoUrl: userModel.photoUrl,
       );
       await context.read<PostProvider>().createPost(postModel);
       if (mounted) {

@@ -5,7 +5,9 @@ import 'package:vibes/models/comments_model.dart';
 import 'package:vibes/models/post_model.dart';
 import 'package:vibes/providers/comments_provider.dart';
 import 'package:vibes/providers/user_provider.dart';
+import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/utils/helpers.dart';
+import 'package:vibes/widgets/app_avatar.dart';
 import 'package:vibes/widgets/app_text.dart';
 import 'package:vibes/widgets/post/post_content.dart';
 import 'package:vibes/widgets/post/post_header.dart';
@@ -45,6 +47,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
         username: currentUser.username,
         fullName: currentUser.fullName,
         createdAt: DateTime.now(),
+        photoUrl: currentUser.photoUrl,
       );
 
       await context.read<CommentsProvider>().createComment(
@@ -166,7 +169,22 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(child: Icon(Icons.person)),
+                              InkWell(
+                                onTap: () async {
+                                  await context
+                                      .read<UserProvider>()
+                                      .getUserByID(comment.uid);
+                                  if (!mounted) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfileVisitScreen(mode: 'other'),
+                                    ),
+                                  );
+                                },
+                                child: AppAvatar(photoUrl: comment.photoUrl),
+                              ),
                               SizedBox(width: 10),
                               Expanded(
                                 child: Column(

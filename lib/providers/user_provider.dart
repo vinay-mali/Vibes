@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vibes/models/user_model.dart';
@@ -69,8 +71,19 @@ class UserProvider extends ChangeNotifier {
 
   Future<List<UserModel>> fetchRandomUser() async {
     try {
-    return await _userService.fetchRandomUsers();
-    } catch (e){
+      return await _userService.fetchRandomUsers();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, String>> uploadProfilePhoto(
+    File imageFile,
+    String? oldPublicId,
+  ) async {
+    try {
+      return await _userService.uploadProfilePhoto(imageFile, oldPublicId);
+    } catch (e) {
       rethrow;
     }
   }

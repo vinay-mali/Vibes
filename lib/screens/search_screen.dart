@@ -5,6 +5,7 @@ import 'package:vibes/models/user_model.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_visit_screen.dart';
 import 'package:vibes/utils/helpers.dart';
+import 'package:vibes/widgets/app_avatar.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -142,7 +143,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 );
                               },
-                              leading: CircleAvatar(child: Icon(Icons.person)),
+                              leading: AppAvatar(
+                                photoUrl: _searchResults[index].photoUrl,
+                              ),
                               title: AppText(
                                 text: _searchResults[index].fullName,
                               ),
@@ -177,6 +180,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
+                                childAspectRatio: 0.9,
                               ),
                           itemBuilder: (context, index) {
                             return Padding(
@@ -216,24 +220,36 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ),
                                         );
                                       },
-                                      child: CircleAvatar(
+                                      child: AppAvatar(
                                         radius: 50,
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 55,
-                                          color: Colors.purple.shade300,
+                                        photoUrl: _randomUsers[index].photoUrl,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        _randomUsers[index].fullName,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ),
-                                    AppText(
-                                      text: _randomUsers[index].fullName,
-                                      textFontWeight: FontWeight.w500,
-                                      textFontSize: 17,
-                                    ),
-                                    AppText(
-                                      text: "@${_randomUsers[index].username}",
-                                      textColor: Colors.grey,
-                                      textFontSize: 14,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        _randomUsers[index].username,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

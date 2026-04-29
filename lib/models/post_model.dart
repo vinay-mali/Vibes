@@ -10,6 +10,7 @@ class PostModel {
   final int likesCount;
   final List<Map<String, dynamic>> likedBy;
   final int commentsCount;
+  final String? photoUrl;
 
   PostModel({
     required this.postID,
@@ -21,6 +22,7 @@ class PostModel {
     required this.likesCount,
     required this.likedBy,
     required this.commentsCount,
+    this.photoUrl,
   });
 
   factory PostModel.fromMap(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class PostModel {
         ),
       ),
       commentsCount: (json['commentsCount'] ?? 0) as int,
+      photoUrl: json['photoUrl'],
     );
   }
 
@@ -52,6 +55,7 @@ class PostModel {
       'likesCount': likesCount,
       'likedBy': likedBy,
       'commentsCount': commentsCount,
+      'photoUrl': photoUrl,
     };
   }
 }

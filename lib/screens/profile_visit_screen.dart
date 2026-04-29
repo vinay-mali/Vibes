@@ -5,6 +5,7 @@ import 'package:vibes/models/post_model.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/screens/profile_set_screen.dart';
 import 'package:vibes/screens/settings_screen.dart';
+import 'package:vibes/widgets/app_avatar.dart';
 import 'package:vibes/widgets/app_text.dart';
 
 class ProfileVisitScreen extends StatefulWidget {
@@ -75,25 +76,22 @@ class _ProfileVisitScreenState extends State<ProfileVisitScreen> {
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 100,
-                  child: Icon(
-                    Icons.person,
-                    size: 110,
-                    color: Colors.purple.shade300,
-                  ),
-                ),
-              ],
+              children: [AppAvatar(photoUrl: user.photoUrl, radius: 100)],
             ),
             SizedBox(height: 20),
-            AppText(
-              text: user.fullName,
-              textFontSize: 25,
-              textFontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: AppText(
+                text: user.fullName,
+                textFontSize: 25,
+                textFontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 20),
-            AppText(text: user.bio ?? "", textFontSize: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13),
+              child: AppText(text: user.bio ?? "", textFontSize: 16),
+            ),
           ],
         ),
       ),

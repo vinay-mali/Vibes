@@ -7,6 +7,7 @@ class CommentsModel {
   final String username;
   final String fullName;
   final DateTime createdAt;
+  final String? photoUrl;
 
   CommentsModel({
     required this.commentID,
@@ -15,6 +16,7 @@ class CommentsModel {
     required this.username,
     required this.fullName,
     required this.createdAt,
+    this.photoUrl
   });
 
   factory CommentsModel.fromMap(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class CommentsModel {
       username: json['username'] ?? "",
       fullName: json['fullName'] ?? "",
       createdAt: (json['createdAt'] as Timestamp).toDate(),
+      photoUrl: json['photoUrl'],
     );
   }
 
@@ -36,6 +39,7 @@ class CommentsModel {
       'username': username,
       'fullName': fullName,
       'createdAt': Timestamp.fromDate(createdAt),
+      'photoUrl' : photoUrl
     };
   }
 }

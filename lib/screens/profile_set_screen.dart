@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/models/user_model.dart';
 
@@ -24,6 +26,10 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
   TextEditingController fullNameCtrl = TextEditingController();
   TextEditingController usernameCtrl = TextEditingController();
   TextEditingController bioCtrl = TextEditingController();
+
+  File? _pickedImage;
+  bool? isUploadingPhoto = false;
+
   bool _isLoading = false;
   @override
   void initState() {
@@ -87,6 +93,20 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
       });
       return;
     }
+    String? photoUrl = context.read<UserProvider>().currentuserModel?.photoUrl;
+    String? photoPublicId = context
+        .read<UserProvider>()
+        .currentuserModel
+        ?.photoPublicId;
+
+    if (_pickedImage != null) {
+      final result = await context.read<UserProvider>().uploadProfilePhoto(
+        _pickedImage!,
+        photoPublicId,
+      );
+      photoUrl = result['url'];
+      photoPublicId = result['publicId'];
+    }
 
     try {
       final UserModel userModel = UserModel(
@@ -95,7 +115,9 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         fullName: fullNameCtrl.text.trim(),
         bio: bioCtrl.text.trim().isEmpty ? "" : bioCtrl.text.trim(),
         createdAt: DateTime.now(),
-        randomIndex: Random().nextDouble()
+        randomIndex: Random().nextDouble(),
+        photoPublicId: photoPublicId,
+        photoUrl: photoUrl,
       );
       if (widget.mode == 'add') {
         await context.read<UserProvider>().createUser(
@@ -128,8 +150,22 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+    if (picked != null) {
+      setState(() {
+        _pickedImage = File(picked.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final photoUrl = context.watch<UserProvider>().currentuserModel?.photoUrl;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -149,9 +185,50 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 100),
+                  SizedBox(height: 40),
+                  Center(
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundImage: _pickedImage != null
+                              ? FileImage(_pickedImage!)
+                              : (photoUrl != null
+                                    ? NetworkImage(photoUrl)
+                                    : null),
+                          child: _pickedImage == null && photoUrl == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.deepPurple.shade300,
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurple,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(
+                      top: 15,
                       left: 15,
                       right: 15,
                       bottom: 10,
