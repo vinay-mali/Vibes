@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vibes/models/post_model.dart';
+import 'package:vibes/services/cloudinary_service.dart';
 
 class PostService {
+  final CloudinaryService _cloudinaryService = CloudinaryService();
   Future<void> createPost(PostModel postModel) async {
     try {
       await FirebaseFirestore.instance
@@ -54,5 +58,17 @@ class PostService {
     }
   }
 
-  
+  Future<List<Map<String, String>>> uploadPostPhoto(
+    List<File> imageFiles,
+  ) async {
+    try {
+      final result = await _cloudinaryService.uploadMultiplePhotos(
+        imageFiles,
+        'posts',
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

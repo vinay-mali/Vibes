@@ -154,7 +154,7 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70,
+      imageQuality: 60,
     );
     if (picked != null) {
       setState(() {

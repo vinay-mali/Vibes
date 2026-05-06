@@ -5,7 +5,7 @@ import 'package:vibes/providers/post_provider.dart';
 import 'package:vibes/providers/user_provider.dart';
 import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_text.dart';
-import 'package:vibes/widgets/post/comments_bottom_sheet.dart';
+import 'package:vibes/screens/comments_screen.dart';
 import 'package:vibes/widgets/post/likes_bottom_sheet.dart';
 
 class PostActions extends StatefulWidget {
@@ -68,14 +68,10 @@ class _PostActionsState extends State<PostActions> {
           children: [
             IconButton(
               onPressed: () {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (context) => Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: CommentsBottomSheet(post: widget.post),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CommentsScreen(post: widget.post),
                   ),
                 );
               },

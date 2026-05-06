@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
 import 'package:vibes/providers/post_provider.dart';
@@ -18,6 +21,7 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   TextEditingController postCtrl = TextEditingController();
   bool isLoading = false;
+  List<File> _pickedImages = [];
 
   final List<String> _hints = [
     "What's going on?",
@@ -40,6 +44,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
       scaffoldMessage(context, "Please write something.");
       return;
     }
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       final userModel = context.read<UserProvider>().currentuserModel;
@@ -47,9 +54,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
         scaffoldMessage(context, "User not found");
         return;
       }
-      setState(() {
-        isLoading = true;
-      });
+
+      List<String> postPhotoUrl = [];
+
+      if (_pickedImages.isNotEmpty) {
+        final result = await context.read<PostProvider>().uploadPostPhotos(
+          _pickedImages,
+        );
+        postPhotoUrl = result.map((e) => e['url'] as String).toList();
+      }
+
       final doc = FirebaseFirestore.instance.collection('posts').doc();
 
       final PostModel postModel = PostModel(
@@ -63,6 +77,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         likesCount: 0,
         commentsCount: 0,
         photoUrl: userModel.photoUrl,
+        postPhotos: postPhotoUrl,
       );
       await context.read<PostProvider>().createPost(postModel);
       if (mounted) {
@@ -75,6 +90,35 @@ class _AddPostScreenState extends State<AddPostScreen> {
         isLoading = false;
       });
     }
+  }
+
+  Future<void> _pickImages() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickMultiImage(imageQuality: 80);
+    if (picked.isNotEmpty) {
+      final results = await Future.wait(
+        picked.map(
+          (xFile) => FlutterImageCompress.compressAndGetFile(
+            xFile.path,
+            '${xFile.path}_compressed.jpg',
+            quality: 40,
+            minWidth: 800,
+            minHeight: 800,
+          ),
+        ),
+      );
+      setState(() {
+        _pickedImages.addAll(
+          results.whereType<XFile>().map((f) => File(f.path)),
+        );
+      });
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _pickedImages.removeAt(index);
+    });
   }
 
   @override
@@ -104,15 +148,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: SafeArea(
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
+                SizedBox(height: 50),
                 Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextField(
                     controller: postCtrl,
                     maxLength: 300,
@@ -131,6 +175,70 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: _pickImages,
+                      icon: Icon(
+                        Icons.photo,
+                        size: 30,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    itemCount: _pickedImages.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            width: 110,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(blurRadius: 5, spreadRadius: 1),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                _pickedImages[index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            child: GestureDetector(
+                              onTap: () => _removeImage(index),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black54,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

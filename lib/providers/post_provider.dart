@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,20 @@ class PostProvider extends ChangeNotifier {
 
   Future<void> unlikePost(String postID, String uid, String username) async {
     try {
-      await _postService.unlikePost(postID, uid,username);
+      await _postService.unlikePost(postID, uid, username);
     } catch (e) {
       rethrow;
     }
   }
 
-  
+  Future<List<Map<String, String>>> uploadPostPhotos(
+    List<File> imageFiles,
+  ) async {
+    try {
+      final result = await _postService.uploadPostPhoto(imageFiles);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

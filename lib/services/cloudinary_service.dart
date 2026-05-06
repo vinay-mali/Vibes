@@ -52,4 +52,13 @@ class CloudinaryService {
       throw "Failed to delete image.";
     }
   }
+
+  Future<List<Map<String,String>>> uploadMultiplePhotos(List<File> imageFiles, String folder)async{
+    try {
+      final results = await Future.wait(imageFiles.map((file)=> uploadImage(file, folder)));
+      return results;
+    } catch (e){
+      throw "Failed to upload multiple images.";
+    }
+  }
 }
