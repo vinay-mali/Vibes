@@ -107,6 +107,11 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
       photoUrl = result['url'];
       photoPublicId = result['publicId'];
     }
+    if (widget.mode == 'edit' &&
+        context.read<UserProvider>().currentuserModel == null) {
+      scaffoldMessage(context, "User not found");
+      return;
+    }
 
     try {
       final UserModel userModel = UserModel(
@@ -118,6 +123,18 @@ class _ProfileSetScreenState extends State<ProfileSetScreen> {
         randomIndex: Random().nextDouble(),
         photoPublicId: photoPublicId,
         photoUrl: photoUrl,
+        followers: widget.mode == 'add'
+            ? []
+            : context.read<UserProvider>().currentuserModel!.followers,
+        following: widget.mode == 'add'
+            ? []
+            : context.read<UserProvider>().currentuserModel!.following,
+        followersCount: widget.mode == 'add'
+            ? 0
+            : context.read<UserProvider>().currentuserModel!.followersCount,
+        followingCount: widget.mode == 'add'
+            ? 0
+            : context.read<UserProvider>().currentuserModel!.followingCount,
       );
       if (widget.mode == 'add') {
         await context.read<UserProvider>().createUser(

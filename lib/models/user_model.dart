@@ -11,6 +11,10 @@ class UserModel {
   final double randomIndex;
   final String? photoUrl;
   final String? photoPublicId;
+  final List<Map<String, dynamic>> followers;
+  final List<Map<String, dynamic>> following;
+  final int followersCount;
+  final int followingCount;
 
   UserModel({
     required this.uid,
@@ -21,6 +25,10 @@ class UserModel {
     required this.randomIndex,
     this.photoUrl,
     this.photoPublicId,
+    required this.followers,
+    required this.following,
+    required this.followersCount,
+    required this.followingCount,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
@@ -33,6 +41,18 @@ class UserModel {
       randomIndex: json['randomIndex'] ?? Random().nextDouble(),
       photoUrl: json['photoUrl'],
       photoPublicId: json['photoPublicId'],
+      followers: List<Map<String, dynamic>>.from(
+        (json['followers'] as List? ?? []).map(
+          (e) => Map<String, dynamic>.from(e),
+        ),
+      ),
+      following: List<Map<String, dynamic>>.from(
+        (json['following'] as List? ?? []).map(
+          (e) => Map<String, dynamic>.from(e),
+        ),
+      ),
+      followersCount: (json['followersCount'] ?? 0) as int,
+      followingCount: (json['followingCount'] ?? 0) as int,
     );
   }
 
@@ -46,6 +66,10 @@ class UserModel {
       'randomIndex': randomIndex,
       'photoUrl': photoUrl,
       'photoPublicId': photoPublicId,
+      'followers': followers,
+      'following': following,
+      'followersCount' : followersCount,
+      'followingCount' : followingCount
     };
   }
 }

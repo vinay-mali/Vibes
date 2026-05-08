@@ -10,7 +10,6 @@ import 'package:vibes/utils/helpers.dart';
 import 'package:vibes/widgets/app_avatar.dart';
 import 'package:vibes/widgets/app_text.dart';
 
-
 class CommentsScreen extends StatefulWidget {
   final PostModel post;
   const CommentsScreen({super.key, required this.post});
@@ -70,17 +69,16 @@ class _CommentsScreenState extends State<CommentsScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        appBar: AppBar(
+          title: AppText(
+            text: "Comments",
+            textFontSize: 20,
+            textFontWeight: FontWeight.w500,
+          ),
+        ),
         body: Column(
           children: [
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 5),
-              child: AppText(
-                text: "Comments",
-                textFontSize: 20,
-                textFontWeight: FontWeight.w500,
-              ),
-            ),
 
             StreamBuilder<QuerySnapshot>(
               stream: context.read<CommentsProvider>().getComment(
@@ -89,7 +87,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(color: Colors.deepPurple),
+                    child: CircularProgressIndicator(color: Colors.white),
                   );
                 }
                 if (snapshot.hasError) {

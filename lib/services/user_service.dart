@@ -120,5 +120,84 @@ class UserService {
     }
   }
 
-  
+  Future<void> followUser(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+        'following': FieldValue.arrayUnion([
+          {'uid': visitorUid, 'username': visitorUsername},
+        ]),
+        'followingCount': FieldValue.increment(1),
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(visitorUid)
+          .update({
+            'followers': FieldValue.arrayUnion([
+              {'uid': userUid, 'username': userUsername},
+            ]),
+            'followersCount': FieldValue.increment(1),
+          });
+    } catch (e) {
+      throw "Something went wrong";
+    }
+  }
+
+  Future<void> unfollowUser(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+        'following': FieldValue.arrayRemove([
+          {'uid': visitorUid, 'username': visitorUsername},
+        ]),
+        'followingCount': FieldValue.increment(-1),
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(visitorUid)
+          .update({
+            'followers': FieldValue.arrayRemove([
+              {'uid': userUid, 'username': userUsername},
+            ]),
+            'followersCount': FieldValue.increment(-1),
+          });
+    } catch (e) {
+      throw "Something went wrong";
+    }
+  }
+
+  Future<void> removeFollower(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+        'followers': FieldValue.arrayRemove([
+          {'uid': visitorUid, 'username': visitorUsername},
+        ]),
+        'followersCount': FieldValue.increment(-1),
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(visitorUid)
+          .update({
+            'following': FieldValue.arrayRemove([
+              {'uid': userUid, 'username': userUsername},
+            ]),
+            'followingCount': FieldValue.increment(-1),
+          });
+    } catch (e) {
+      throw "Unable to remove follower";
+    }
+  }
 }

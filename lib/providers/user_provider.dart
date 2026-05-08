@@ -87,4 +87,58 @@ class UserProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> followUser(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await _userService.followUser(
+        userUid,
+        userUsername,
+        visitorUsername,
+        visitorUid,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> unfollowUser(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await _userService.unfollowUser(
+        userUid,
+        userUsername,
+        visitorUsername,
+        visitorUid,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> removeFollower(
+    String userUid,
+    String userUsername,
+    String visitorUsername,
+    String visitorUid,
+  ) async {
+    try {
+      await _userService.removeFollower(
+        userUid,
+        userUsername,
+        visitorUsername,
+        visitorUid,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
