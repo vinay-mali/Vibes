@@ -71,4 +71,25 @@ class PostService {
       rethrow;
     }
   }
+
+  Stream<List<PostModel>> getPostsOnProfile(String uid) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => PostModel.fromMap(doc.data()))
+              .toList(),
+        );
+  }
+
+  Future<void> deleteUserPost(String postId) async {
+    try {
+      await FirebaseFirestore.instance.collection('posts').doc(postId).delete();
+    } catch (e) {
+      throw "Failed to delete post. Try again";
+    }
+  }
 }

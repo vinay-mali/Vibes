@@ -47,4 +47,16 @@ class PostProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Stream<List<PostModel>> getPostsOnProfile(String uid) {
+    return _postService.getPostsOnProfile(uid);
+  }
+
+  Future<void> deleteUserPost(String postId) async {
+    try {
+      await _postService.deleteUserPost(postId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
