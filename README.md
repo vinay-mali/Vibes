@@ -13,7 +13,6 @@ A full social media mobile app built with Flutter and Firebase.
 - Delete your own posts
 - Realtime updates with Firestore streams
 - Image zoom on user post images
-- Hero animations on post images
 
 ## Tech Stack
 - Flutter
