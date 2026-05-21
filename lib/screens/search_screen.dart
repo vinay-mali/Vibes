@@ -108,7 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             onPressed: handleSearch,
                             icon: Icon(Icons.search),
                           ),
-                    hintText: "Search",
+                    hintText: "Search by username",
                     hintStyle: GoogleFonts.poppins(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(13),

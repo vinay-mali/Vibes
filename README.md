@@ -1,16 +1,31 @@
-# vibes
+# Vibes
+A full social media mobile app built with Flutter and Firebase.
 
-A new Flutter project.
+## Features
+- Email authentication (login & signup)
+- Create posts with multiple images
+- Like & unlike posts with animation
+- Comment on posts
+- Follow & unfollow users
+- Search users
+- Explore random user suggestions
+- Profile management with photo upload
+- Delete your own posts
+- Realtime updates with Firestore streams
+- Image zoom on user post images
+- Hero animations on post images
 
-## Getting Started
+## Tech Stack
+- Flutter
+- Firebase Auth
+- Cloud Firestore
+- Cloud Storage (via Cloudinary)
+- Provider (state management)
 
-This project is a starting point for a Flutter application.
+## Architecture
+Service → Provider → UI pattern for clean separation of concerns.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+![Home Screen](screenshots/home_feed.jpg)
+![Profile Screen](screenshots/user_profile.jpg)
+![Explore Screen](screenshots/explore_search.jpg)
