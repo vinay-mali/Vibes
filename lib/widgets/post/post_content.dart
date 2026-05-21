@@ -34,7 +34,7 @@ class PostContent extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PhotoViewScreen(
+                              builder: (context) => PhotoViewScreen(heroTag: "post-image-${post.postID}-$index",
                                 photo: post.postPhotos![index],
                               ),
                             ),
@@ -47,9 +47,11 @@ class PostContent extends StatelessWidget {
                               ],
                             ),
 
-                            child: Image.network(
-                              post.postPhotos![index],
-                              fit: BoxFit.cover,
+                            child: Hero(tag: "post-image-${post.postID}-$index",
+                              child: Image.network(
+                                post.postPhotos![index],
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),

@@ -15,7 +15,8 @@ import 'package:vibes/widgets/post/post_card.dart';
 class ProfileVisitScreen extends StatefulWidget {
   final String mode;
   final PostModel? post;
-  const ProfileVisitScreen({super.key, required this.mode, this.post});
+  final String? heroTag;
+  const ProfileVisitScreen({super.key, required this.mode, this.post,this.heroTag});
   @override
   State<ProfileVisitScreen> createState() => _ProfileVisitScreenState();
 }

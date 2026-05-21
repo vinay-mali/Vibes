@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class PhotoViewScreen extends StatefulWidget {
   final String photo;
-  const PhotoViewScreen({super.key, required this.photo});
+  final String heroTag;
+  const PhotoViewScreen({
+    super.key,
+    required this.photo,
+    required this.heroTag,
+  });
   @override
   State<PhotoViewScreen> createState() => _PhotoViewScreenState();
 }
@@ -23,7 +28,10 @@ class _PhotoViewScreenState extends State<PhotoViewScreen> {
         child: InteractiveViewer(
           minScale: 1.0,
           maxScale: 4.0,
-          child: Image.network(widget.photo, fit: BoxFit.contain),
+          child: Hero(
+            tag: widget.heroTag,
+            child: Image.network(widget.photo, fit: BoxFit.contain),
+          ),
         ),
       ),
     );

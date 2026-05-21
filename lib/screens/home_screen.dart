@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:vibes/models/post_model.dart';
 import 'package:vibes/providers/post_provider.dart';
@@ -53,7 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   final post = PostModel.fromMap(
                     snapshot.data!.docs[index].data() as Map<String, dynamic>,
                   );
-                  return PostCard(post: post);
+                  return PostCard(post: post)
+                      .animate()
+                      .fadeIn(duration: 300.ms)
+                      .slideY(begin: 0.1, end: 0);
                 },
               );
             },
