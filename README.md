@@ -28,3 +28,6 @@ Service → Provider → UI pattern for clean separation of concerns.
 ![Home Screen](screenshots/home_feed.jpg)
 ![Profile Screen](screenshots/user_profile.jpg)
 ![Explore Screen](screenshots/explore_search.jpg)
+
+## Demo
+[Watch Demo Video](https://youtu.be/9Q9vdGhmD_4?si=n2X4FxSJz2S4FBeU)
